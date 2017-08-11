@@ -7,6 +7,7 @@
       "email": "604989282@qq.com"
     }
   ],
+  "autoload": {
     "files": [
       "Src/Function/Array.php",
       "Src/Function/String.php",
