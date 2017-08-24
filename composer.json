@@ -14,6 +14,8 @@
     "files": [
       "Src/Function/Array.php",
       "Src/Function/String.php",
+      "Src/Function/DataStructure.php",
+      "Src/Function/General.php",
       "Src/Function/System.php"
     ]
   }
