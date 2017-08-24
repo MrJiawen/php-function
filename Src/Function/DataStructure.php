@@ -80,3 +80,41 @@ function object_merge(...$param)
 
     return $return;
 }
+
+/**
+ * 对象集合按照音序排序
+ * @param $handle
+ * @param $target
+ * @param string $oder
+ * @return array
+ * @Author jiaWen.chen
+ */
+function sortByPinyin($handle, $target, $oder = 'asc')
+{
+    if (!is_array($handle)) {
+        simpleError('$handle must be array parameter !!!', __FILE__, __LINE__);
+    }
+
+    $tmp = [];
+    $pinyin = new Overtrue\Pinyin\Pinyin();
+    switch (gettype(array_values($handle)[0])) {
+        case 'object':
+            foreach ($handle as $key => $value) {
+                $tmp[$key] = implode('', $pinyin->convert($value->$target));
+            }
+            break;
+        case 'array':
+            foreach ($handle as $key => $value) {
+                $tmp[$key] = implode('', $pinyin->convert($value[$target]));
+            }
+            break;
+        default :
+            simpleError('element in $handle must be object or array ', __FILE__, __LINE__);
+    }
+    $oder == 'asc' ? asort($tmp) : arsort($tmp);
+    $response = [];
+    foreach ($tmp as $key => $value) {
+        $response[] = $handle[$key];
+    }
+    return $response;
+}
