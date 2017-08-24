@@ -7,6 +7,9 @@
       "email": "604989282@qq.com"
     }
   ],
+  "require": {
+    "overtrue/pinyin": "^3.0"
+  },
   "autoload": {
     "files": [
       "Src/Function/Array.php",
