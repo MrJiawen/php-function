@@ -45,3 +45,33 @@ function simpleError($message, $filename, $lineno, $severity = 2, $code = 0, $pr
     throw new Psy\Exception\ErrorException($message, $code, $severity, $filename, $lineno, $previous);
 }
 
+/**
+ * 计算系统消耗 初始化标签
+ */
+function computeSystemResource_init()
+{
+    global $computeSystemResourceTime;
+    $computeSystemResourceTime = microtime(true);;
+}
+
+/**
+ * 得到系统消耗信息
+ * @param bool $isPrint
+ * @return array|string
+ */
+function computeSystemResource_getInfo($isPrint = true)
+{
+    global $computeSystemResourceTime;
+
+    $nowTime = microtime(true);;
+
+    // 使用的时常和内存消耗
+    $useTime = sprintf('%0.4f', $nowTime - $computeSystemResourceTime);
+    $useMemory = sprintf('%0.2f', memory_get_usage() / 1024 / 1024);
+
+    if ($isPrint) {
+        return " 内存消耗为：{$useMemory}MB，用时：{$useTime} 秒";
+    } else {
+        return ['memory' => $useMemory, 'time' => $useTime];
+    }
+}
