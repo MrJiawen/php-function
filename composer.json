@@ -1,5 +1,5 @@
 {
-  "name": "mr-jiawen/php-generator",
+  "name": "mr-jiawen/php-support",
   "license": "MIT",
   "authors": [
     {
@@ -12,7 +12,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Jw\\Generator\\": "src/"
+      "Jw\\Support\\": "src/"
     }
   }
 }

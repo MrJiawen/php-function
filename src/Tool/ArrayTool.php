@@ -1,6 +1,6 @@
 <?php
 
-namespace Jw\Generator\Tool;
+namespace Jw\Support\Tool;
 
 class ArrayTool
 {
