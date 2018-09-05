@@ -1,5 +1,3 @@
-# php-function
-全局函数
-```
-composer require mr-jiawen/php-function
-```
+# php-generator
+
+底层应用方法
