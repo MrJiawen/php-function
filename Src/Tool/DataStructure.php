@@ -1,48 +1,62 @@
 <?php
 
-/** 对象转数组
- * @param $obj
- * @return mixed
- */
-function toArray($obj)
-{
-    return json_decode(json_encode($obj), true);
-}
+namespace Jw\Generator\Tool;
 
-/** 数组转对象
- * @param $array
- * @return mixed
- */
-function toObject($array)
+class DataStructure
 {
-    return json_decode(json_encode($array));
-}
-
-/** 对json序列化的字符串进行添加或修改某个值
- * @param $key
- * @param $value
- * @param $obj
- * @return string
- */
-function jsonString_add($key, $value, $obj)
-{
-    $obj = json_decode($obj, true);
-    $operate = &$obj;
-    $key = explode('.', $key);
-
-    for ($i = 0; $i < count($key); $i++) {
-        if (isset($operate[$key[$i]]) && is_array($operate[$key[$i]]) && ($i != count($key) - 1)) {
-            $operate = &$operate[$key[$i]];
-        } else if (!isset($operate[$key[$i]]) && ($i != count($key) - 1)) {
-            $operate[$key[$i]] = array();
-            $operate = &$operate[$key[$i]];
-        } else {
-            $operate[$key[$i]] = $value;
-        }
+    /**
+     * 对象转数组
+     * @param $param
+     * @return array
+     * @Author jiaWen.chen
+     */
+    public static function toArray($param): array
+    {
+        return json_decode(json_encode($param), true);
     }
 
-    return json_encode($obj);
+    /**
+     * 数组转对象
+     * @param $param
+     * @return mixed
+     * @Author jiaWen.chen
+     */
+    public static function toObject($param)
+    {
+        return json_decode(json_encode($param),false);
+    }
+
+
+    /** 对json序列化的字符串进行添加或修改某个值
+     * @param $key
+     * @param $value
+     * @param $obj
+     * @return string
+     */
+    public static function jsonString_add(string $key,$value,string $obj)
+    {
+        $obj = json_decode($obj, true);
+
+        $operate = &$obj;
+        $key = explode('.', $key);
+
+        for ($i = 0; $i < count($key); $i++) {
+            if (isset($operate[$key[$i]]) && is_array($operate[$key[$i]]) && ($i != count($key) - 1)) {
+                $operate = &$operate[$key[$i]];
+            } else if (!isset($operate[$key[$i]]) && ($i != count($key) - 1)) {
+                $operate[$key[$i]] = array();
+                $operate = &$operate[$key[$i]];
+            } else {
+                $operate[$key[$i]] = $value;
+            }
+        }
+
+        return json_encode($obj);
+    }
 }
+
+
+
 
 /** 对json序列化的字符串进行删除
  * @param $key

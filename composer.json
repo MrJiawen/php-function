@@ -1,5 +1,5 @@
 {
-  "name": "mr-jiawen/php-function",
+  "name": "mr-jiawen/php-generator",
   "license": "MIT",
   "authors": [
     {
@@ -11,12 +11,8 @@
     "overtrue/pinyin": "^3.0"
   },
   "autoload": {
-    "files": [
-      "Src/Function/Array.php",
-      "Src/Function/String.php",
-      "Src/Function/DataStructure.php",
-      "Src/Function/General.php",
-      "Src/Function/System.php"
-    ]
+    "psr-4": {
+      "Jw\\Generator\\": "src/"
+    }
   }
 }
