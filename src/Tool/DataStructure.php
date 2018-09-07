@@ -87,4 +87,84 @@ class DataStructure
 
         return $response;
     }
+
+    /**
+     * 数据可视化操作
+     * @param $param
+     * @param bool $haveQuotation
+     * @param int $indent
+     * @param string $symbol
+     * @return string
+     * @Author jiaWen.chen
+     */
+    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = ":")
+    {
+        $response = self::_getJsonView($param, $haveQuotation, $indent, $symbol);
+        return implode("\n", $response);
+    }
+
+    /**
+     * 数据可视化操作
+     * @param $param
+     * @param bool $haveQuotation
+     * @param int $indent
+     * @param string $symbol
+     * @return array
+     * @Author jiaWen.chen
+     */
+    private static function _getJsonView($param, bool $haveQuotation, int $indent, string $symbol)
+    {
+        // 1. 定义变量
+        $param = self::toObject($param);
+        $response = [];
+        $indentStr = '';
+        for ($i = 0; $i < $indent; $i++) {
+            $indentStr .= ' ';
+        }
+
+        // 2. 判断是对象还是数组
+        if (is_array($param)) {
+            $response[] = "[";
+        } else {
+            $response[] = "{";
+        }
+        foreach ($param as $key => $value) {
+            // 3. 子元素是否为 复合数据类型
+            if (is_array($value) || is_object($value)) {
+                $view = self::_getJsonView($value, $haveQuotation, $indent, $symbol);
+                $view[0] = "\"$key\"$symbol " . $view[0];
+                $view = array_map(function ($item) use ($indentStr) {
+                    return $indentStr . $item;
+                }, $view);
+                $response = array_merge($response, $view);
+            } else if (is_array($param) && is_string($value)) {
+                // 4. 是否为数组  字符串类型
+                $response[] = $indentStr . "\"$value\",";
+            } else if (is_array($param) && (is_numeric($value) || is_bool($value))) {
+                if (is_bool($value)) {
+                    $value = $value ? 'true' : 'false';
+                }
+                // 4. 是否为数组  非字符串类型
+                $response[] = $indentStr . $value . ',';
+            } else if (is_object($param) && is_string($value)) {
+                // 5. 是否为对象  字符串类型
+                $response[] = $indentStr . "\"$key\"{$symbol} \"$value\",";
+            } else if (is_object($param) && (is_numeric($value) || is_bool($value))) {
+                // 5. 是否为对象  非字符串类型
+                if (is_bool($value)) {
+                    $value = $value ? 'true' : 'false';
+                }
+                $response[] = $indentStr . "\"$key\"{$symbol} $value,";
+            }
+            // 6. 去除最后一个元素的逗号
+            $response[count($response) - 1] = trim($response[count($response) - 1], ',');
+        }
+        // 2. 判断是对象还是数组
+        if (is_array($param)) {
+            $response[] = "]";
+        } else {
+            $response[] = "}";
+        }
+        return $response;
+    }
 }
