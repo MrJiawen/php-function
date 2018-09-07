@@ -39,12 +39,12 @@ class FileTool
      * @return int
      * @Author jiaWen.chen
      */
-    public static function put(string $file,string $content):int
+    public static function put(string $file, string $content): int
     {
-        if(!self::exists(dirname($file))){
+        if (!self::exists(dirname($file))) {
             self::mkDir(dirname($file));
         }
-       return file_put_contents($file,$content);
+        return file_put_contents($file, $content);
     }
 
     /**
@@ -54,12 +54,73 @@ class FileTool
      * @return int
      * @Author jiaWen.chen
      */
-    public static function append(string $file,string $content):int
+    public static function append(string $file, string $content): int
     {
-        if(!self::exists(dirname($file))){
+        if (!self::exists(dirname($file))) {
             self::mkDir(dirname($file));
         }
-        return file_put_contents($file,$content,FILE_APPEND);
+        return file_put_contents($file, $content, FILE_APPEND);
+    }
+
+    /**
+     * 获取一个目录下的文件 (不包括文件夹)
+     * @param string $path
+     * @param string|null $filter
+     * @return array
+     * @Author jiaWen.chen
+     */
+    public static function getFiles(string $path, string $filter = null): array
+    {
+        if (!self::exists($path)) {
+            return [];
+        }
+        $files = array_filter(scandir($path), function ($item) use ($path, $filter) {
+            if ($item == '.' || $item == '..' || is_dir($path . '/' . $item)) {
+                return false;
+            }
+            if (!empty($filter) && (pathinfo($item)['extension'] != trim($filter, '.'))) {
+                return false;
+            }
+            return true;
+        });
+
+        $files = array_map(function ($item) use ($path) {
+            return $path . '/' . $item;
+        }, $files);
+
+        return $files;
+    }
+
+    /**
+     * 获取一个目录下的所有的文件递归 (不包括文件夹)
+     * @param string $path
+     * @param string|null $filter
+     * @return array
+     * @Author jiaWen.chen
+     */
+    public static function getAllFiles(string $path, string $filter = null): array
+    {
+        if (!self::exists($path)) {
+            return [];
+        }
+        $files = [];
+        array_map(function ($item) use ($path, $filter, &$files) {
+            if ($item == '.' || $item == '..') {
+                return false;
+            }
+            if (is_dir($path . '/' . $item)) {
+                $files = array_merge($files, self::getAllFiles($path . '/' . $item, $filter));
+                return true;
+            }
+            if (!empty($filter) && (pathinfo($item)['extension'] != trim($filter, '.'))) {
+
+                return false;
+            }
+            $files[] = $path . '/' . $item;
+            return true;
+        }, scandir($path));
+
+        return $files;
     }
 }
 
