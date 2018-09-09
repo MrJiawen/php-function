@@ -97,7 +97,7 @@ class DataStructure
      * @return string
      * @Author jiaWen.chen
      */
-    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = ":")
+    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = "=>")
     {
         $response = self::_getJsonView($param, $haveQuotation, $indent, $symbol);
         return implode("\n", $response);
@@ -140,25 +140,25 @@ class DataStructure
             } else if (is_array($param) && is_string($value)) {
                 // 4. 是否为数组  字符串类型
                 $response[] = $indentStr . "\"$value\",";
-            } else if (is_array($param) && (is_numeric($value) || is_bool($value))) {
-                if (is_bool($value)) {
-                    $value = $value ? 'true' : 'false';
-                }
+            } else if (is_array($param) && !is_string($value)) {
+                $value = $value === true ? 'true' : $value;
+                $value = $value === false ? 'false' : $value;
+                $value = $value === null ? 'null' : $value;
                 // 4. 是否为数组  非字符串类型
                 $response[] = $indentStr . $value . ',';
             } else if (is_object($param) && is_string($value)) {
                 // 5. 是否为对象  字符串类型
                 $response[] = $indentStr . "\"$key\"{$symbol} \"$value\",";
-            } else if (is_object($param) && (is_numeric($value) || is_bool($value))) {
+            } else if (is_object($param) && !is_string($value)) {
                 // 5. 是否为对象  非字符串类型
-                if (is_bool($value)) {
-                    $value = $value ? 'true' : 'false';
-                }
+                $value = $value === true ? 'true' : $value;
+                $value = $value === false ? 'false' : $value;
+                $value = $value === null ? 'null' : $value;
                 $response[] = $indentStr . "\"$key\"{$symbol} $value,";
             }
-            // 6. 去除最后一个元素的逗号
-            $response[count($response) - 1] = trim($response[count($response) - 1], ',');
         }
+        // 6. 去除最后一个元素的逗号
+        $response[count($response) - 1] = trim($response[count($response) - 1], ',');
         // 2. 判断是对象还是数组
         if (is_array($param)) {
             $response[] = "]";
