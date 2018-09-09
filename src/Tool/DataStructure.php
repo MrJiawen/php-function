@@ -94,12 +94,14 @@ class DataStructure
      * @param bool $haveQuotation
      * @param int $indent
      * @param string $symbol
+     * @param bool $isPHP
      * @return string
+     * @internal param bool $isPhp
      * @Author jiaWen.chen
      */
-    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = "=>")
+    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = "=>", bool $isPHP = false)
     {
-        $response = self::_getJsonView($param, $haveQuotation, $indent, $symbol);
+        $response = self::_getJsonView($param, $haveQuotation, $indent, $symbol, $isPHP);
         return implode("\n", $response);
     }
 
@@ -109,10 +111,12 @@ class DataStructure
      * @param bool $haveQuotation
      * @param int $indent
      * @param string $symbol
+     * @param bool $isPHP
      * @return array
+     * @internal param bool $isPhp
      * @Author jiaWen.chen
      */
-    private static function _getJsonView($param, bool $haveQuotation, int $indent, string $symbol)
+    private static function _getJsonView($param, bool $haveQuotation, int $indent, string $symbol, bool $isPHP)
     {
         // 1. 定义变量
         $param = self::toObject($param);
@@ -123,7 +127,7 @@ class DataStructure
         }
 
         // 2. 判断是对象还是数组
-        if (is_array($param)) {
+        if (is_array($param) || $isPHP) {
             $response[] = "[";
         } else {
             $response[] = "{";
@@ -131,15 +135,14 @@ class DataStructure
         foreach ($param as $key => $value) {
             // 3. 子元素是否为 复合数据类型
             if (is_array($value) || is_object($value)) {
-                $view = self::_getJsonView($value, $haveQuotation, $indent, $symbol);
-                if ((is_array($param))) {
-                    $view[0] = "$key$symbol " . $view[0];
-                } elseif (is_object($param)) {
+                $view = self::_getJsonView($value, $haveQuotation, $indent, $symbol, $isPHP);
+                if (is_object($param)) {
                     $view[0] = "\"$key\"$symbol " . $view[0];
                 }
                 $view = array_map(function ($item) use ($indentStr) {
                     return $indentStr . $item;
                 }, $view);
+                $view[count($view) - 1] .= ',';
                 $response = array_merge($response, $view);
             } else if (is_array($param) && is_string($value)) {
                 // 4. 是否为数组  字符串类型
@@ -164,7 +167,7 @@ class DataStructure
         // 6. 去除最后一个元素的逗号
         $response[count($response) - 1] = trim($response[count($response) - 1], ',');
         // 2. 判断是对象还是数组
-        if (is_array($param)) {
+        if (is_array($param) || $isPHP) {
             $response[] = "]";
         } else {
             $response[] = "}";
