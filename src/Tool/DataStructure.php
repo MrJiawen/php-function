@@ -132,7 +132,11 @@ class DataStructure
             // 3. 子元素是否为 复合数据类型
             if (is_array($value) || is_object($value)) {
                 $view = self::_getJsonView($value, $haveQuotation, $indent, $symbol);
-                $view[0] = "\"$key\"$symbol " . $view[0];
+                if ((is_array($param))) {
+                    $view[0] = "$key$symbol " . $view[0];
+                } elseif (is_object($param)) {
+                    $view[0] = "\"$key\"$symbol " . $view[0];
+                }
                 $view = array_map(function ($item) use ($indentStr) {
                     return $indentStr . $item;
                 }, $view);
