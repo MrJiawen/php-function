@@ -2,6 +2,8 @@
 
 namespace Jw\Support\Tool;
 
+use Jw\Support\Exceptions\InvalidArgumentException;
+
 class StringTool
 {
 
@@ -26,5 +28,27 @@ class StringTool
     {
         $str = preg_replace(self::UTF8_SYMBOL_PATTERN, "", $str);
         return self::str_utf8_chinese_word_count($str) + str_word_count(preg_replace(self::UTF8_CHINESE_PATTERN, "", $str));
+    }
+
+    /**
+     * 不同的类型的变量对应的视觉代码
+     * @param $param
+     * @return string
+     * @throws InvalidArgumentException
+     * @Author jiaWen.chen
+     */
+    public static function valueView($param)
+    {
+        if (is_string($param)) {
+            return '"' . $param . '"';
+        } elseif (is_bool($param)) {
+            return $param ? 'true' : 'false';
+        } elseif (is_null($param)) {
+            return 'null';
+        } elseif (is_numeric($param)) {
+            return $param;
+        }
+
+        throw new InvalidArgumentException('参数格式异常，只接受标量');
     }
 }
