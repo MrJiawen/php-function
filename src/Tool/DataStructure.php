@@ -99,7 +99,7 @@ class DataStructure
      * @internal param bool $isPhp
      * @Author jiaWen.chen
      */
-    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = "=>", bool $isPHP = false)
+    public static function getJsonView($param, bool $haveQuotation = true, int $indent = 4, string $symbol = ":", bool $isPHP = false)
     {
         $response = self::_getJsonView($param, $haveQuotation, $indent, $symbol, $isPHP);
         return implode("\n", $response);
@@ -144,24 +144,12 @@ class DataStructure
                 }, $view);
                 $view[count($view) - 1] .= ',';
                 $response = array_merge($response, $view);
-            } else if (is_array($param) && is_string($value)) {
-                // 4. 是否为数组  字符串类型
-                $response[] = $indentStr . "\"$value\",";
-            } else if (is_array($param) && !is_string($value)) {
-                $value = $value === true ? 'true' : $value;
-                $value = $value === false ? 'false' : $value;
-                $value = $value === null ? 'null' : $value;
-                // 4. 是否为数组  非字符串类型
-                $response[] = $indentStr . $value . ',';
-            } else if (is_object($param) && is_string($value)) {
-                // 5. 是否为对象  字符串类型
-                $response[] = $indentStr . "\"$key\"{$symbol} \"$value\",";
-            } else if (is_object($param) && !is_string($value)) {
-                // 5. 是否为对象  非字符串类型
-                $value = $value === true ? 'true' : $value;
-                $value = $value === false ? 'false' : $value;
-                $value = $value === null ? 'null' : $value;
-                $response[] = $indentStr . "\"$key\"{$symbol} $value,";
+            } else if (is_array($param)) {
+                // 4. 是否为数组
+                $response[] = $indentStr . StringTool::valueView($value) . ',';
+            } else if (is_object($param)) {
+                // 5. 是否为对象
+                $response[] = $indentStr . "\"$key\"{$symbol} " . StringTool::valueView($value) . ",";
             }
         }
         // 6. 去除最后一个元素的逗号
